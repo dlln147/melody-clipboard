@@ -98,22 +98,27 @@ are only visible to people with write access to the repository.
 ### Expected filenames
 
 Tauri's bundler names installers from the app's `productName` ("Melody
-Clipboard") and version, so filenames contain a literal space:
+Clipboard") and version. The bundler itself uses a literal space
+(`Melody Clipboard_1.0.0_...`), but GitHub's release-asset upload replaces
+spaces with dots, so the filenames you'll actually see on the Releases page
+are (confirmed against the real v1.0.0 release):
 
 ```text
-Melody Clipboard_1.0.0_aarch64.dmg      macOS, Apple Silicon
-Melody Clipboard_1.0.0_x64.dmg          macOS, Intel
-Melody Clipboard_1.0.0_x64-setup.exe    Windows x64 (NSIS)
-Melody Clipboard_1.0.0_x64_en-US.msi    Windows x64 (MSI)
-SHA256SUMS.txt                          checksums for all of the above
+Melody.Clipboard_1.0.0_aarch64.dmg           macOS, Apple Silicon
+Melody.Clipboard_1.0.0_aarch64.app.tar.gz    macOS, Apple Silicon (updater artifact, not needed for a normal install)
+Melody.Clipboard_1.0.0_x64.dmg               macOS, Intel
+Melody.Clipboard_1.0.0_x64.app.tar.gz        macOS, Intel (updater artifact)
+Melody.Clipboard_1.0.0_x64-setup.exe         Windows x64 (NSIS)
+Melody.Clipboard_1.0.0_x64_en-US.msi         Windows x64 (MSI)
+SHA256SUMS.txt                                checksums for all six installers above
 ```
 
-These are Tauri's default generated names, kept as-is rather than renamed,
-since renaming after `tauri-action` uploads them would mean re-implementing
-(and risking) its upload logic. If you want prettier filenames, the
-`checksums` job's `gh release download` step is a safe place to add a
-rename step in the future — download by the exact name reported by `gh
-release view <tag> --json assets`, never by a wildcard.
+These are the default names produced by `tauri-action` + GitHub, kept as-is
+rather than renamed, since renaming after `tauri-action` uploads them would
+mean re-implementing (and risking) its upload logic. If you want different
+filenames, the `checksums` job's `gh release download` step is a safe place
+to add a rename step in the future — download by the exact name reported by
+`gh release view <tag> --json assets`, never by a wildcard.
 
 ## Failed releases
 
