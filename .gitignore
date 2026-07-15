@@ -1,0 +1,42 @@
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Rust / Tauri
+target/
+src-tauri/target/
+src-tauri/gen/
+*.pdb
+*.dSYM/
+
+# Icon generation intermediates (regenerate with scripts/generate-icons.sh)
+icons-src/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Coverage
+coverage/
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# OS
+.DS_Store
+
+# Logs
+npm-debug.log*
+*.log
+
+# Manual testing artifacts (do not commit MIDI files generated while testing)
+*.mid
+!fixtures/**/*.mid
+
+# Release tooling scratch output
+SHA256SUMS.txt

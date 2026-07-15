@@ -1,0 +1,37 @@
+[package]
+name = "melody-clipboard"
+version = "1.0.0"
+description = "Convert Hooktheory/Hookpad clipboard melody JSON into Standard MIDI files"
+authors = ["Dillon Barabasz"]
+license = "MIT"
+repository = "https://github.com/dlln147/melody-clipboard"
+edition = "2021"
+rust-version = "1.77"
+
+[lib]
+name = "melody_clipboard_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-store = "2"
+tauri-plugin-window-state = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+midly = "0.5"
+thiserror = "2"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
