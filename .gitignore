@@ -22,10 +22,11 @@ icons-src/
 # Coverage
 coverage/
 
-# Editor
+# Editor / local tooling
 .vscode/*
 !.vscode/extensions.json
 .idea/
+.claude/
 
 # OS
 .DS_Store

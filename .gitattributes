@@ -1,0 +1,10 @@
+# Normalize all text files to LF on checkout, on every platform (including
+# Windows CI runners), so Prettier/EditorConfig formatting checks are
+# consistent regardless of which OS checked the repository out.
+* text=auto eol=lf
+
+# Never touch line endings on binary files.
+*.png binary
+*.icns binary
+*.ico binary
+*.dmg binary
