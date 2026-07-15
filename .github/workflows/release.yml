@@ -122,6 +122,7 @@ jobs:
 
     env:
       HAS_WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE != '' }}
+      HAS_APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE != '' }}
 
     steps:
       - name: Checkout
@@ -167,11 +168,30 @@ jobs:
           Import-PfxCertificate -FilePath certificate/certificate.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String $env:WINDOWS_CERTIFICATE_PASSWORD -Force -AsPlainText)
           Remove-Item -Path certificate -Recurse
 
-      - name: Build and upload (${{ matrix.label }})
+      # Tauri's macOS bundler checks whether APPLE_CERTIFICATE is *set at
+      # all* (not whether it's non-empty) to decide whether to codesign.
+      # Since an unconfigured GitHub secret still resolves to an empty
+      # string (not an absent key), the Apple env vars must be omitted
+      # entirely for unsigned builds rather than passed as "" — hence two
+      # mutually exclusive steps instead of one step with empty-safe vars.
+      - name: Build and upload, unsigned (${{ matrix.label }})
+        if: env.HAS_APPLE_CERTIFICATE != 'true'
         uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # macOS signing/notarization: no-ops (unsigned build) when unset.
+        with:
+          tagName: ${{ needs.resolve.outputs.tag }}
+          releaseName: "Melody Clipboard ${{ needs.resolve.outputs.tag }}"
+          releaseDraft: true
+          prerelease: false
+          generateReleaseNotes: true
+          args: --target ${{ matrix.target }}
+
+      - name: Build and upload, signed (${{ matrix.label }})
+        if: env.HAS_APPLE_CERTIFICATE == 'true'
+        uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
